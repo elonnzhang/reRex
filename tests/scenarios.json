@@ -1,0 +1,33 @@
+[
+  { "name": "claude-basic", "agent": "claude", "cmd": "claude", "steps": ["join"] },
+  { "name": "claude-clear", "agent": "claude", "cmd": "claude", "steps": ["join", "/clear", "join"], "via": "hook" },
+  {
+    "name": "claude-clear-env", "agent": "claude", "cmd": "REX_BLOCK= claude",
+    "steps": ["sleep join", "/clear", "sleep join"], "via": "env",
+    "note": "REX_BLOCK 为空时 rerex-hook.sh 不记，rerex 只能从工具命令的环境变量里看到会话 ID"
+  },
+  {
+    "name": "codex-basic", "agent": "codex", "cmd": "codex", "steps": ["join"],
+    "note": "codex 默认几个窗格共用一个 app-server，hook 和工具命令都在它下面，rerex 拿不到会话 ID，只能 codex resume --last"
+  },
+  { "name": "codex-new", "agent": "codex", "cmd": "codex", "steps": ["join", "/new", "join"] },
+  {
+    "name": "codex-new-hook", "agent": "codex", "cmd": "codex -c features.daemon_auto_start=false",
+    "steps": ["join", "/new", "join"], "via": "hook",
+    "note": "不用共用的 app-server，hook 和工具命令都在这个 codex 下面"
+  },
+  {
+    "name": "codex-new-env", "agent": "codex", "cmd": "REX_BLOCK= codex -c features.daemon_auto_start=false",
+    "steps": ["sleep join", "/new", "sleep join"], "via": "env"
+  },
+  { "name": "pi-basic", "agent": "pi", "cmd": "pi", "steps": ["join"] },
+  {
+    "name": "hermes-basic", "agent": "hermes", "cmd": "hermes", "steps": ["join"], "restart": false,
+    "note": "hermes 的对话在几个窗格共用的 gateway 里跑，rerex 拿不到会话 ID，又没有可靠的 continue，应当认出它但不重开"
+  },
+  {
+    "name": "htop-rerun", "agent": "htop", "cmd": "htop -d 25", "steps": [], "command": "htop -d 25",
+    "note": "rerun：按原来的命令行重跑，参数也在"
+  },
+  { "name": "btop-rerun", "agent": "btop", "cmd": "btop -u 3000", "steps": [], "command": "btop -u 3000" }
+]

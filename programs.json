@@ -1,0 +1,74 @@
+[
+  {
+    "name": "claude",
+    "type": "agent",
+    "note": "Claude Code。包装过的 Claude Code 换了程序名的话，在用户配置里改 match",
+    "match": ["claude"],
+    "env": ["CLAUDE_CODE_SESSION_ID"],
+    "argv": ["--resume", "--session-id"],
+    "resume": ["claude", "--resume", "{id}"],
+    "continue": ["claude", "--continue"],
+    "skip_flags": ["-p", "--print"],
+    "skip_commands": ["mcp", "doctor", "update", "install", "setup-token", "plugin", "config"]
+  },
+  {
+    "name": "codex",
+    "type": "agent",
+    "note": "新版的几个 Codex 共用一个 app-server，各窗格的工具命令都在它下面跑。它自己的环境只是启动它的那个窗格当时的，所以不看它",
+    "match": ["codex"],
+    "env": ["CODEX_THREAD_ID"],
+    "skip_children": ["app-server"],
+    "argv": ["resume"],
+    "resume": ["codex", "resume", "{id}"],
+    "continue": ["codex", "resume", "--last"],
+    "skip_commands": [
+      "exec", "e", "review", "login", "logout", "mcp", "mcp-server", "plugin", "app-server", "app",
+      "exec-server", "remote-control", "completion", "update", "doctor", "sandbox", "debug", "apply", "a",
+      "cloud", "features", "archive", "unarchive", "delete", "agents", "help"
+    ]
+  },
+  {
+    "name": "pi",
+    "type": "agent",
+    "note": "pi 把进程名改成了 pi，ps 里看不到它的参数",
+    "match": ["pi"],
+    "env": ["PI_SESSION_ID"],
+    "argv": ["--session", "--session-id"],
+    "resume": ["pi", "--session", "{id}"],
+    "continue": ["pi", "--continue"],
+    "skip_flags": ["-p", "--print", "--no-session"],
+    "skip_commands": ["install", "remove", "uninstall", "update", "list", "config", "auth", "mcp"]
+  },
+  {
+    "name": "hermes",
+    "type": "agent",
+    "note": "hermes -c 先找这个终端上次的对话，没有就取所有目录里最近的一个。恢复出的窗格换了终端，会接到别的对话上，所以不设 continue。hermes_cli 是它的启动器用 python -c 跑的那段代码",
+    "match": ["hermes", "hermes_cli"],
+    "env": ["HERMES_SESSION_ID"],
+    "argv": ["--resume", "-r"],
+    "resume": ["hermes", "--resume", "{id}"],
+    "skip_flags": ["-z", "--oneshot", "-q", "--query"],
+    "skip_commands": [
+      "gateway", "cron", "dashboard", "acp", "mcp", "setup", "config", "doctor", "update", "sessions",
+      "kanban", "portal", "send"
+    ]
+  },
+  {
+    "name": "herdr",
+    "type": "tui",
+    "note": "herdr 是全屏 TUI 应用，不是 agent。它的服务器不在 Rex 里，Rex 停机后还在，重开客户端就能接回原来的会话。不带 --session 时接的是默认会话。--remote 接的是别的机器，重开成本机的会接错，不重开",
+    "match": ["herdr"],
+    "shared": true,
+    "argv": ["--session", "session attach"],
+    "resume": ["herdr", "--session", "{id}"],
+    "continue": ["herdr"],
+    "skip_flags": ["--remote", "--machine"],
+    "skip_commands": [
+      "status", "update", "channel", "machine", "server", "api", "completion", "config", "workspace",
+      "worktree", "tab", "notification", "agent", "pane", "integration"
+    ]
+  },
+  { "name": "htop", "type": "tui", "note": "按原来的命令行重跑", "match": ["htop"], "rerun": true },
+  { "name": "btop", "type": "tui", "note": "按原来的命令行重跑", "match": ["btop"], "rerun": true },
+  { "name": "top", "type": "tui", "note": "按原来的命令行重跑", "match": ["top"], "rerun": true }
+]
